@@ -32,8 +32,8 @@ router.get("/:id", checkAccountId, async (req, res, next) => {
 
 router.post("/", checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
     try {
-        const newAccount = await Account.create(req.payload);
-        res.status(201).json(newAccount);
+        await Account.create(req.payload);
+        res.status(201).json(req.payload);
         next();
     } catch (err) {
         res.status(500).json({
@@ -44,15 +44,8 @@ router.post("/", checkAccountPayload, checkAccountNameUnique, async (req, res, n
 
 router.put("/:id", checkAccountId, checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
     try {
-        console.log("Hee")
-        const name = req.payload.name
-        const budget =req.payload.budget
-
-        const account={name, budget}
-        
-        console.log(account)
-        const UpdatedAccount = await Account.updateById(req.id, account);
-        res.status(200).json(UpdatedAccount);
+        await Account.updateById(req.id, req.payload);
+        res.status(200).json(req.payload);
         next();
     } catch (err) {
         res.status(500).json({
@@ -74,10 +67,10 @@ router.delete("/:id", checkAccountId, async (req, res, next) => {
 });
 
 router.use((err, req, res, next) => {
-  res.status(500).json({
-    message: "An unexpected error occurred.",
-    error: err.message, // Optionally include the error message for debugging
-  });
+    res.status(500).json({
+        message: "An unexpected error occurred.",
+        error: err.message, // Optionally include the error message for debugging
+    });
 });
 
 module.exports = router;

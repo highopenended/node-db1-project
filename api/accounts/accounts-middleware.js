@@ -24,35 +24,38 @@ exports.checkAccountId = async (req, res, next) => {
         });
     }
 };
-
 exports.checkAccountPayload = (req, res, next) => {
+    // let { name, budget } = req.body;
 
-    let { name, budget } = req.body;
-    
-    if(name) name = name.trim();
-    req.payload = { name, budget };
+    let name = req.body.name
+    let budget=req.body.budget
 
+    if (typeof name === "string") {
+      name = name.trim();
+    }
     if (!name || !budget) {
-        res.status(400).json({
-            message: "name and budget are required'",
-        });
-    }else if(name.length < 3 || name.length > 100){
-      res.status(400).json({
+      return res.status(400).json({
+          message: "name and budget are required",
+      });
+    }
+    if (name.length < 3 || name.length > 100) {
+      return res.status(400).json({
           message: "name of account must be between 3 and 100",
       });
-    }else if(!Number(budget)){
-      res.status(400).json({
+    }
+    if (Number(budget) < 0 || Number(budget) > 1000000) {
+      return res.status(400).json({
+          message: "budget of account is too large or too small",
+      });
+    }
+    if (isNaN(Number(budget))) {
+      return res.status(400).json({
           message: "budget of account must be a number",
       });
-    }else if (Number(budget)<0 || Number(budget)>1000000) {
-        res.status(400).json({
-            message: "budget of account is too large or too small",
-        });
-    } else {
-        req.payload = { name, budget };
-        next();
     }
-    
+
+    req.payload = { name, budget };
+    next();
 };
 
 exports.checkAccountNameUnique = async (req, res, next) => {
@@ -64,8 +67,8 @@ exports.checkAccountNameUnique = async (req, res, next) => {
         });
         const matchedAccount = names.find((nm) => nm === name);
         if (matchedAccount) {
-            res.status(400).json({
-                message: "Name already exists in database",
+            return res.status(400).json({
+                message: "Name is taken",
             });
         } else {
             next();
