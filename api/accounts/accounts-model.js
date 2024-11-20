@@ -21,7 +21,7 @@ const updateById = (id, account) => {
 }
 
 const deleteById = id => {
-  return db('users')
+  return db('accounts')
     .where('id', id)
     .del();
 }

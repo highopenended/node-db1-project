@@ -1,9 +1,5 @@
 const router = require("express").Router();
-const {
-    checkAccountId,
-    checkAccountNameUnique,
-    checkAccountPayload,
-} = require("./accounts-middleware");
+const { checkAccountId, checkAccountNameUnique, checkAccountPayload } = require("./accounts-middleware");
 const Account = require("./accounts-model");
 
 router.get("/", async (req, res) => {
@@ -35,35 +31,41 @@ router.get("/:id", checkAccountId, async (req, res, next) => {
     }
 });
 
-
-router.post('/', checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
-        try {
-            const newAccount = await Account.create(req.payload);
-            res.status(200).json(newAccount);
-            next();
-        } catch (err) {
-            res.status(500).json({
-                message: "problem adding account",
-            });
-        }
+router.post("/", checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
+    try {
+        const newAccount = await Account.create(req.payload);
+        res.status(200).json(newAccount);
+        next();
+    } catch (err) {
+        res.status(500).json({
+            message: "problem adding account",
+        });
     }
-);
+});
 
 router.put("/:id", async (req, res, next) => {
     // DO YOUR MAGIC
-    console.log("PUT: '/:id'");
+    // console.log("PUT: '/:id'");
     res.status(200).json({ message: `PUT: /${req.params.id}` });
+    next()
 });
 
-router.delete("/:id", async (req, res, next) => {
-    // DO YOUR MAGIC
-    console.log("DELETE: '/:id'");
-    res.status(200).json({ message: `DELETE: /${req.params.id}` });
+router.delete("/:id",checkAccountId, async (req, res, next) => {
+    try {
+        await Account.deleteById(req.id);
+        res.status(200).json(req.account);
+        next();
+    } catch (err) {
+        res.status(500).json({
+            message: "problem deleting account",
+        });
+    }
 });
 
 router.use((err, req, res, next) => {
     // eslint-disable-line
     // DO YOUR MAGIC
+    next()
 });
 
 module.exports = router;
