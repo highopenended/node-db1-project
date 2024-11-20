@@ -2,11 +2,22 @@ const router = require('express').Router()
 const { checkAccountId, checkAccountNameUnique, checkAccountPayload } = require("./accounts-middleware");
 const Account = require("./accounts-model");
 
-router.get('/', (req, res, next) => {
-  // DO YOUR MAGIC
-  console.log("GET: '/'")
-  res.status(200).json({message:"GET: /"})
-})
+router.get("/", async (req, res) => {
+  try {
+    const accounts = await Account.getAll();
+    if (!accounts) {
+      res.status(404).json({
+        message: "Couldn't find accounts",
+      });
+    } else {
+      res.status(200).json(accounts);
+    }
+  } catch (err) {
+    res.status(500).json({
+      message: "problem finding accounts",
+    });
+  }
+});
 
 router.get('/:id', (req, res, next) => {
   // DO YOUR MAGIC
