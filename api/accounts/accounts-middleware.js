@@ -25,32 +25,36 @@ exports.checkAccountId = async (req, res, next) => {
     }
 };
 exports.checkAccountPayload = (req, res, next) => {
-    // let { name, budget } = req.body;
 
-    let name = req.body.name
-    let budget=req.body.budget
+    const foundName = "name" in req.body
+    const foundBudget = "budget" in req.body
 
-    if (typeof name === "string") {
-      name = name.trim();
-    }
-    if (!name || !budget) {
+    if (!foundName || !foundBudget) {
       return res.status(400).json({
           message: "name and budget are required",
       });
+    }
+
+    let name = req.body.name
+    let budget=req.body.budget
+    let budgetNotNum = isNaN(Number(budget)) || budget===null
+
+    if (typeof name === "string") {
+      name = name.trim();
     }
     if (name.length < 3 || name.length > 100) {
       return res.status(400).json({
           message: "name of account must be between 3 and 100",
       });
     }
+    if (budgetNotNum) {
+      return res.status(400).json({
+          message: "budget of account must be a number",
+      });
+    }
     if (Number(budget) < 0 || Number(budget) > 1000000) {
       return res.status(400).json({
           message: "budget of account is too large or too small",
-      });
-    }
-    if (isNaN(Number(budget))) {
-      return res.status(400).json({
-          message: "budget of account must be a number",
       });
     }
 

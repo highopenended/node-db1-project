@@ -66,7 +66,6 @@ describe('server.js', () => {
       const invalid1 = {}
       const invalid2 = { name: "foo" }
       const invalid3 = { budget: 123 }
-
       let res = await request(server).post('/api/accounts').send(invalid1)
       expect(res.body.message).toMatch(/name and budget are required/i)
       expect(res.status).toBe(400)
@@ -96,7 +95,7 @@ describe('server.js', () => {
       const invalid2 = { name: "foo", budget: 'aaa' }
       let res = await request(server).post('/api/accounts').send(invalid1)
       expect(res.body.message).toMatch(/must be a number/i)
-      expect(res.status).toBe(400)
+      expect(res.status).toBe(400)  
       res = await request(server).post('/api/accounts').send(invalid2)
       expect(res.body.message).toMatch(/must be a number/i)
       expect(res.status).toBe(400)

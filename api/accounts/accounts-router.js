@@ -42,7 +42,7 @@ router.post("/", checkAccountPayload, checkAccountNameUnique, async (req, res, n
     }
 });
 
-router.put("/:id", checkAccountId, checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
+router.put("/:id", checkAccountPayload, checkAccountId, checkAccountNameUnique, async (req, res, next) => {
     try {
         await Account.updateById(req.id, req.payload);
         res.status(200).json(req.payload);
