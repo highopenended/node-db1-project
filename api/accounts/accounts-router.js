@@ -45,7 +45,9 @@ router.post("/", checkAccountPayload, checkAccountNameUnique, async (req, res, n
 
 router.put("/:id", checkAccountId, checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
     try {
-        const UpdatedAccount = await Account.updateById(req.id, req.payload);
+        const account={id:req.id,name:req.payload.name, budget:req.payload.budget}
+        const UpdatedAccount = await Account.updateById(req.id, account);
+        console.log(account)
         res.status(201).json(UpdatedAccount);
         next();
     } catch (err) {
@@ -68,9 +70,10 @@ router.delete("/:id", checkAccountId, async (req, res, next) => {
 });
 
 router.use((err, req, res, next) => {
-    // eslint-disable-line
-    // DO YOUR MAGIC
-    next();
+  res.status(500).json({
+    message: "An unexpected error occurred.",
+    error: err.message, // Optionally include the error message for debugging
+  });
 });
 
 module.exports = router;

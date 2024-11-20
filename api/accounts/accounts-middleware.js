@@ -27,47 +27,39 @@ exports.checkAccountId = async (req, res, next) => {
 
 exports.checkAccountPayload = (req, res, next) => {
 
-
     let { name, budget } = req.body;
-
-
-    name = name.trim();
-    budget = budget.trim();
-
+    if(name && budget){
+      name = name.trim();
+      budget = budget.trim();
+    }
+    req.payload = { name, budget };
+    console.log("Here now")
 
     if (!name || !budget) {
+        console.log("name and budget are required")
         res.status(400).json({
             message: "name and budget are required'",
         });
-        // next();
-    }
-
-    const currencyRegex = /^-?\d+(\.\d{0,2})?$/; // Matches optional negative sign, digits, optional decimal with up to 2 digits
-    const checkNameLengthOk = !(name.length < 3 || name.length > 100);
-    const checkBudgetIsCurrency = currencyRegex.test(budget);
-    const BudgetNum=Number(budget)
-
-    if(!checkNameLengthOk){
+    }else if(name.length < 3 || name.length > 100){
+      console.log("name of account must be between 3 and 100")
       res.status(400).json({
           message: "name of account must be between 3 and 100",
       });
-    }else if(!BudgetNum){
+    }else if(!Number(budget)){
+      console.log("budget of account must be a number")
       res.status(400).json({
           message: "budget of account must be a number",
       });
-    }else if (!checkBudgetIsCurrency) {
-      res.status(400).json({
-          message: "must be a number'",
-      });
-    }else if (BudgetNum<0 || BudgetNum>1000000) {
+    }else if (Number(budget)<0 || Number(budget)>1000000) {
+      console.log("budget of account is too large or too small")
         res.status(400).json({
-            message: "too large or too small",
+            message: "budget of account is too large or too small",
         });
     } else {
+        console.log("Made it to end")
         req.payload = { name, budget };
         next();
     }
-    
     
 };
 
