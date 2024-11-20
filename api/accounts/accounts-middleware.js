@@ -28,35 +28,27 @@ exports.checkAccountId = async (req, res, next) => {
 exports.checkAccountPayload = (req, res, next) => {
 
     let { name, budget } = req.body;
-    if(name && budget){
-      name = name.trim();
-      budget = budget.trim();
-    }
+    
+    if(name) name = name.trim();
     req.payload = { name, budget };
-    console.log("Here now")
 
     if (!name || !budget) {
-        console.log("name and budget are required")
         res.status(400).json({
             message: "name and budget are required'",
         });
     }else if(name.length < 3 || name.length > 100){
-      console.log("name of account must be between 3 and 100")
       res.status(400).json({
           message: "name of account must be between 3 and 100",
       });
     }else if(!Number(budget)){
-      console.log("budget of account must be a number")
       res.status(400).json({
           message: "budget of account must be a number",
       });
     }else if (Number(budget)<0 || Number(budget)>1000000) {
-      console.log("budget of account is too large or too small")
         res.status(400).json({
             message: "budget of account is too large or too small",
         });
     } else {
-        console.log("Made it to end")
         req.payload = { name, budget };
         next();
     }
