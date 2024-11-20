@@ -17,7 +17,12 @@ const create = account => {
 }
 
 const updateById = (id, account) => {
-
+  return db('accounts')
+    .where({ id })
+    .update(account)
+    .then(rows => {
+        return getById(id);
+    });
 }
 
 const deleteById = id => {
@@ -33,3 +38,6 @@ module.exports = {
   updateById,
   deleteById,
 }
+// .then(rows => {
+//   return getById(id);
+// });

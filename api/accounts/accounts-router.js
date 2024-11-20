@@ -21,7 +21,6 @@ router.get("/", async (req, res) => {
 
 router.get("/:id", checkAccountId, async (req, res, next) => {
     try {
-        console.log("Made it Here");
         res.status(200).json(req.account);
         next();
     } catch (err) {
@@ -35,6 +34,7 @@ router.post("/", checkAccountPayload, checkAccountNameUnique, async (req, res, n
     try {
         const newAccount = await Account.create(req.payload);
         res.status(200).json(newAccount);
+        // res.status(200).json("Return Test");
         next();
     } catch (err) {
         res.status(500).json({
@@ -43,14 +43,19 @@ router.post("/", checkAccountPayload, checkAccountNameUnique, async (req, res, n
     }
 });
 
-router.put("/:id", async (req, res, next) => {
-    // DO YOUR MAGIC
-    // console.log("PUT: '/:id'");
-    res.status(200).json({ message: `PUT: /${req.params.id}` });
-    next()
+router.put("/:id", checkAccountId, checkAccountPayload, checkAccountNameUnique, async (req, res, next) => {
+    try {
+        const UpdatedAccount = await Account.updateById(req.id, req.payload);
+        res.status(201).json(UpdatedAccount);
+        next();
+    } catch (err) {
+        res.status(500).json({
+            message: "problem updating account",
+        });
+    }
 });
 
-router.delete("/:id",checkAccountId, async (req, res, next) => {
+router.delete("/:id", checkAccountId, async (req, res, next) => {
     try {
         await Account.deleteById(req.id);
         res.status(200).json(req.account);
@@ -65,7 +70,7 @@ router.delete("/:id",checkAccountId, async (req, res, next) => {
 router.use((err, req, res, next) => {
     // eslint-disable-line
     // DO YOUR MAGIC
-    next()
+    next();
 });
 
 module.exports = router;
